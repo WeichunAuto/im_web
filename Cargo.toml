@@ -1,0 +1,27 @@
+[workspace]
+members = ["chat_server", "notify_server"]
+resolver = "2"
+[workspace.dependencies]
+tokio = { version = "1.47.1", features = [
+    "full",
+    "macros",
+    "rt",
+    "rt-multi-thread",
+    "net",
+] }
+axum = { version = "0.8.4", features = [
+    "http2",
+    "query",
+    "tracing",
+    "multipart",
+] }
+serde = { version = "1.0.225", features = ["derive"] }
+serde_json = { version = "1.0.145" }
+dotenvy = "0.15.7"
+anyhow = "1.0.100"
+thiserror = "2.0.17"
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio-rustls"] }
+serde_yaml = "0.9.34"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+tracing = "0.1.41"
+tower = "0.5.2"
