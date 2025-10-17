@@ -5,7 +5,9 @@ use axum::{
 };
 use serde::Deserialize;
 
-use crate::models::user::{User, UserResponse};
+use crate::models::{User, UserResponse};
+
+// use crate::models::user::{User, UserResponse};
 
 #[derive(Deserialize)]
 pub(crate) struct UserQuery {
@@ -19,7 +21,7 @@ pub(crate) struct UserQuery {
 pub(crate) async fn create_user(Json(user): Json<User>) -> Json<UserResponse> {
     let new_user = UserResponse {
         id: 1,
-        name: format!("{}{}", user.name, user.password.len()),
+        name: format!("{}{}", user.email, user.password_hash.unwrap()),
         active: true,
     };
     Json(new_user)

@@ -1,10 +1,12 @@
+-- Add migration script here
+
 -- create user table
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     fullname VARCHAR(64) NOT NULL,
     email VARCHAR(64) NOT NULL,
     password_hash VARCHAR(97) NOT NULL,
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    create_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- create chat type: single, private_channel, publish_channel
@@ -18,7 +20,7 @@ CREATE TABLE IF NOT EXISTS chats (
 
     -- user id list
     members BIGINT[] NOT NULL,
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    create_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- create messages table
@@ -28,7 +30,7 @@ CREATE TABLE IF NOT EXISTS messages (
     sender_id BIGINT NOT NULL,
     content TEXT NOT NULL,
     images TEXT[],
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    create_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (chat_id) REFERENCES chats(id),
     FOREIGN KEY (sender_id) REFERENCES users(id)

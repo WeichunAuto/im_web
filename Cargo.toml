@@ -20,7 +20,12 @@ serde_json = { version = "1.0.145" }
 dotenvy = "0.15.7"
 anyhow = "1.0.100"
 thiserror = "2.0.17"
-sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio-rustls"] }
+sqlx = { version = "0.8.6", features = [
+    "postgres",
+    "runtime-tokio",
+    "tls-rustls",
+    "chrono",
+] }
 serde_yaml = "0.9.34"
 tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 tracing = "0.1.41"
