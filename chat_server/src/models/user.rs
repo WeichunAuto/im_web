@@ -14,11 +14,12 @@ struct EmailPassword {
 impl User {
     /// find a user by email
     pub async fn find_by_email(email: &str, pool: &PgPool) -> Result<Option<User>, AppError> {
-        let user =
-            sqlx::query_as("SELECT id, fullname, email, create_at FROM users where email = $1")
-                .bind(email)
-                .fetch_optional(pool)
-                .await?;
+        let user = sqlx::query_as(
+            "SELECT id, fullname, email, ws_id, create_at FROM users where email = $1",
+        )
+        .bind(email)
+        .fetch_optional(pool)
+        .await?;
         Ok(user)
     }
 
@@ -27,19 +28,27 @@ impl User {
         email: &str,
         fullname: &str,
         password: &str,
+        ws_id: i64,
         pool: &PgPool,
     ) -> Result<User, AppError> {
+        let opt_user = Self::find_by_email(email, pool).await?;
+        if opt_user.is_some() {
+            return Err(AppError::EmailConflictError(format!(
+                "this account {email} already exists."
+            )));
+        }
         let hash_password = hash_password(password)?;
         let user = sqlx::query_as(
             r#"
-            INSERT INTO users (email, fullname, password_hash) 
-            VALUES ($1, $2, $3) 
-            RETURNING id, fullname, email, create_at
+            INSERT INTO users (email, fullname, password_hash, ws_id) 
+            VALUES ($1, $2, $3, $4) 
+            RETURNING id, fullname, email, ws_id, create_at
             "#,
         )
         .bind(email)
         .bind(fullname)
         .bind(hash_password)
+        .bind(ws_id)
         .fetch_one(pool)
         .await?;
 
@@ -53,7 +62,7 @@ impl User {
         pool: &PgPool,
     ) -> Result<Option<User>, AppError> {
         let user_opt: Option<User> = sqlx::query_as(
-            "SELECT id, email, fullname, password_hash, create_at from users where email = $1",
+            "SELECT id, email, fullname, password_hash, ws_id, create_at from users where email = $1",
         )
         .bind(email)
         .fetch_optional(pool)
@@ -116,7 +125,7 @@ mod tests {
         let email = "bobby@gmail.com";
         let password = "W3c";
         let fullname = "Bobby Wang";
-        let user = User::create(email, fullname, password, &pool).await?;
+        let user = User::create(email, fullname, password, 0, &pool).await?;
         let ret = User::verify_account_by_email(email, password, &pool).await?;
         assert_eq!(ret.unwrap().email, user.email);
         assert_eq!(email, user.email);

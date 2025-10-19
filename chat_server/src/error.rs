@@ -7,4 +7,7 @@ pub enum AppError {
 
     #[error("password hash error: {0}")]
     PasswordHashError(#[from] argon2::password_hash::Error),
+
+    #[error("email conflicts: {0}")]
+    EmailConflictError(String),
 }

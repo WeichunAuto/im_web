@@ -41,3 +41,6 @@ CREATE INDEX IF NOT EXISTS chat_id_create_at_index ON messages(chat_id, create_a
 
 -- create index for the messages table: query messages by sender_id
 CREATE INDEX IF NOT EXISTS sender_id_index ON messages(sender_id);
+
+-- initial values for users;
+INSERT INTO users (id, fullname, email, password_hash) VALUES (0, 'Super', 'super@none.com', '');
